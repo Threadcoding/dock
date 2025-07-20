@@ -1,4 +1,4 @@
-FROM jlesage/firefox:alpine
+FROM jlesage/firefox
 
 # Disable connection blocking
 ENV NOVNC_WHITELIST="*"
