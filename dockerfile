@@ -1,12 +1,12 @@
-# Base image with Firefox
-FROM jlesage/firefox
+FROM jlesage/firefox:alpine
 
-# Expose the VNC port (5800 = web interface)
+# Disable connection blocking
+ENV NOVNC_WHITELIST="*"
+RUN echo "blacklist = " > /etc/xvnc/xvnc.conf
+
+# Optimize for Render
+ENV DISABLE_IPV6=1
+ENV ENABLE_CJK_FONT=1
+ENV NOVNC_HTTP_PORT=5800
+
 EXPOSE 5800
-
-# Optional: Set a login password (replace 'yourpassword')
-ENV LOGIN_USERNAME=Admin24 LOGIN_PASSWORD=ITTHTEST2024
-
-# Optional: Auto-install extensions (e.g., Multi-Account Containers)
-RUN mkdir -p /config/extensions
-ADD https://addons.mozilla.org/firefox/downloads/latest/multi-account-containers/addon.xpi /config/extensions/multi-account-containers.xpi
