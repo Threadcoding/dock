@@ -1,9 +1,20 @@
-FROM jlesage/firefox
+FROM lscr.io/linuxserver/firefox:latest
 
-# Trick Render into seeing this as HTTP
-ENV NOVNC_HTTP_PORT=80
-EXPOSE 80
+# Install Node.js and PageCrypt
+USER root
+RUN apt-get update && apt-get install -y nodejs npm && apt-get clean
+RUN npm install -g @robertklep/pagecrypt
 
-# Real configuration
-ENV DISPLAY=:0
-ENV NOVNC_PORT=5800
+# Copy a custom index.html with PageCrypt
+COPY index.html /app/index.html
+RUN pagecrypt /app/index.html /app/index.encrypted.html --password "Passwordadmin123"
+
+# Serve the encrypted page
+ENV NGINX_PORT=3000
+ENV SELKIES_DISABLE_GAMEPAD=true
+ENV PUID=1000
+ENV PGID=1000
+ENV TZ=Australia/Perth
+ENV FIREFOX_CLI=https://outlook.live.com
+
+USER abc
