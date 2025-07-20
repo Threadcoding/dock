@@ -1,19 +1,9 @@
 FROM jlesage/firefox
 
-# 1. Disable connection blocking (correct method)
-ENV NOVNC_WHITELIST="*"
-# Allows all IPs
+# Trick Render into seeing this as HTTP
+ENV NOVNC_HTTP_PORT=80  # Fake HTTP port
+EXPOSE 80
 
-# 2. Prevent IPv6 issues on Render
-ENV DISABLE_IPV6=1
-
-# 3. Force HTTP mode (Render prefers HTTP over raw VNC)
-ENV ENABLE_CJK_FONT=1
-# Fixes font rendering
-
-EXPOSE 5800
-# Web interface port
-
-# 4. Optional: Set a password
-ENV LOGIN_USERNAME=admin
-ENV LOGIN_PASSWORD=yourpassword
+# Real configuration
+ENV DISPLAY=:0
+ENV NOVNC_PORT=5800
