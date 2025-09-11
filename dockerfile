@@ -1,6 +1,6 @@
 FROM dockurr/windows
 
-# Environment variables
+# Environment variables to fix the errors
 ENV VERSION="10"
 ENV DISK_SIZE="256G"
 ENV RAM_SIZE="8G"
@@ -9,15 +9,17 @@ ENV USERNAME="bill"
 ENV PASSWORD="gates"
 ENV LANGUAGE="English"
 ENV RDP_RESOLUTION="1920x1080"
-ENV RDP_SESSION="rdp"
-ENV RDP_AUDIO="rdp"
+ENV ACCELERATION="none"      # Disable KVM acceleration
+ENV TUN_NETDEV="off"         # Disable TUN device requirement
+ENV USER_PORTS="on"          # Enable user-mode networking
+ENV MTU="1500"               # Set proper MTU size
 
 # Expose ports
 EXPOSE 3389
-EXPOSE 8000
 
-# Add health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=300s --retries=3 \
-  CMD netstat -an | grep 3389 > /dev/null || exit 1
+# Add startup script to handle the limitations
+COPY entrypoint-fix.sh /entrypoint-fix.sh
+RUN chmod +x /entrypoint-fix.sh
 
-# Entrypoint remains from base image
+# Use the fixed entrypoint
+ENTRYPOINT ["/entrypoint-fix.sh"]
