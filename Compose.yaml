@@ -18,10 +18,16 @@ services:
       - USER_PORTS=on        # Critical: Enable user-mode networking
       - MTU=1500             # Fix MTU size
       - QEMU_OPTS=-netdev user,id=net0 -device virtio-net-pci,netdev=net0
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
     ports:
       - "3389:3389"
     restart: unless-stopped
-    # No device mappings or privileged mode needed
+     volumes:
+      - ./windows:/storage
     networks:
       - windows-net
 
