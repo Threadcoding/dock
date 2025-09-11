@@ -1,31 +1,24 @@
 #!/bin/bash
 
-echo "Starting Windows VM..."
+echo "Starting Windows VM with minimal configuration..."
 
-# Start QEMU in background but keep container alive
+# Minimal QEMU configuration without problematic devices
 qemu-system-x86_64 \
     -m 8G \
     -smp 4 \
     -accel tcg \
     -cpu qemu64 \
-    -drive file=/windows.qcow2,format=qcow2,if=virtio \
-    -device virtio-vga \
-    -device virtio-net,netdev=net0 \
-    -netdev user,id=net0,hostfwd=tcp::3389-:3389,hostfwd=tcp::5900-:5900 \
-    -device usb-tablet \
-    -device intel-hda \
-    -device hda-output \
+    -drive file=/windows.qcow2,format=qcow2 \
+    -netdev user,id=net0,hostfwd=tcp::3389-:3389 \
+    -device e1000,netdev=net0 \
+    -vga std \
     -display none \
-    -vnc :0 \
+    -vnc 0.0.0.0:0 \
     -daemonize
 
-echo "QEMU started in background"
-echo "RDP port: 3389"
-echo "VNC port: 5900"
+echo "Windows VM started successfully!"
+echo "RDP available on port 3389"
+echo "VNC available on port 5900"
 
-# Keep container alive by monitoring QEMU process
-while ps aux | grep -q "[q]emu-system"; do
-    sleep 30
-done
-
-echo "QEMU process stopped, exiting container"
+# Keep container running
+tail -f /dev/null
