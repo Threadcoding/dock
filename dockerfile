@@ -1,33 +1,23 @@
-FROM lscr.io/linuxserver/firefox:latest
+FROM dockurr/windows
 
-# Switch to root user for package installation
-USER root
+# Environment variables
+ENV VERSION="10"
+ENV DISK_SIZE="256G"
+ENV RAM_SIZE="8G"
+ENV CPU_CORES="4"
+ENV USERNAME="bill"
+ENV PASSWORD="gates"
+ENV LANGUAGE="English"
+ENV RDP_RESOLUTION="1920x1080"
+ENV RDP_SESSION="rdp"
+ENV RDP_AUDIO="rdp"
 
-# Update package lists and install nodejs and npm
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Expose ports
+EXPOSE 3389
+EXPOSE 8000
 
-# Install PageCrypt globally
-RUN npm install -g @robertklep/pagecrypt
+# Add health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=300s --retries=3 \
+  CMD netstat -an | grep 3389 > /dev/null || exit 1
 
-# Copy and encrypt the index.html
-COPY index.html /app/index.html
-RUN pagecrypt /app/index.html /app/index.encrypted.html --password "Passwordadmin123"
-
-# Create /tmp/.X11-unix with correct permissions
-RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
-
-# Set environment variables
-ENV SELKIES_DISABLE_GAMEPAD=true
-ENV NO_X11=true
-ENV PUID=1000
-ENV PGID=1000
-ENV TZ=Australia/Perth
-ENV FIREFOX_CLI=https://outlook.live.com
-
-# Switch back to the non-root user
-USER abc
+# Entrypoint remains from base image
