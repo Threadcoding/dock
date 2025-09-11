@@ -1,19 +1,17 @@
+version: '3.8'
+
 services:
-  windows:
+  windows-rdp:
     image: dockurr/windows
-    container_name: windows
     environment:
-      VERSION: "11"
-    devices:
-      - /dev/kvm
-      - /dev/net/tun
-    cap_add:
-      - NET_ADMIN
+      - VERSION=10
+      - DISK_SIZE=256G
+      - RAM_SIZE=8G
+      - CPU_CORES=4
+      - USERNAME=bill
+      - PASSWORD=gates
+      - LANGUAGE=English
+      - QEMU_OPTS=-accel tcg -netdev user,id=net0 -device virtio-net-pci,netdev=net0
     ports:
-      - 8006:8006
-      - 3389:3389/tcp
-      - 3389:3389/udp
-    volumes:
-      - ./windows:/storage
-    restart: always
-    stop_grace_period: 2m
+      - "3389:3389"
+    restart: unless-stopped
