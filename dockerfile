@@ -9,10 +9,10 @@ ENV USERNAME="bill"
 ENV PASSWORD="gates"
 ENV LANGUAGE="English"
 ENV RDP_RESOLUTION="1920x1080"
-ENV ACCELERATION="none"      # Disable KVM acceleration
-ENV TUN_NETDEV="off"         # Disable TUN device requirement
-ENV USER_PORTS="on"          # Enable user-mode networking
-ENV MTU="1500"               # Set proper MTU size
+ENV ACCELERATION="none"      
+ENV TUN_NETDEV="off"         
+ENV USER_PORTS="on"          
+ENV MTU="1500"          
 
 # Expose ports
 EXPOSE 3389
