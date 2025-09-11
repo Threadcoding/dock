@@ -1,20 +1,16 @@
-# Use a base image that doesn't require device access
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
-# Install QEMU with software emulation only
+# Install QEMU and necessary tools
 RUN apt-get update && apt-get install -y \
     qemu-system-x86 \
     qemu-utils \
-    spice-vdagent \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Download Windows ISO (you'll need to provide this)
-# ADD Win10_22H2_English_x64.iso /windows.iso
-
-# Create disk image
+# Create Windows disk image (256GB)
 RUN qemu-img create -f qcow2 /windows.qcow2 256G
 
-# Startup script
+# Copy startup script
 COPY start-windows.sh /start-windows.sh
 RUN chmod +x /start-windows.sh
 
