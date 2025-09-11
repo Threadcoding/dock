@@ -1,17 +1,15 @@
 version: '3.8'
 
 services:
-  windows-rdp:
-    image: dockurr/windows
-    environment:
-      - VERSION=10
-      - DISK_SIZE=256G
-      - RAM_SIZE=8G
-      - CPU_CORES=4
-      - USERNAME=bill
-      - PASSWORD=gates
-      - LANGUAGE=English
-      - QEMU_OPTS=-accel tcg -netdev user,id=net0 -device virtio-net-pci,netdev=net0
+  windows-vm:
+    build: .
     ports:
-      - "3389:3389"
+      - "8080:8080"  # HTTP port for Render detection
+      - "3389:3389"  # RDP port
+      - "5900:5900"  # VNC port
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+          cpus: '4'
