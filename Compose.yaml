@@ -1,36 +1,19 @@
-version: '3.8'
-
 services:
-  windows-rdp:
+  windows:
     image: dockurr/windows
-    container_name: windows-rdp
+    container_name: windows
     environment:
-      - VERSION=10
-      - DISK_SIZE=256G
-      - RAM_SIZE=8G
-      - CPU_CORES=4
-      - USERNAME=bill
-      - PASSWORD=gates
-      - LANGUAGE=English
-      - RDP_RESOLUTION=1920x1080
-      - ACCELERATION=none    # Critical: Disable KVM
-      - TUN_NETDEV=off       # Critical: Disable TUN requirement
-      - USER_PORTS=on        # Critical: Enable user-mode networking
-      - MTU=1500             # Fix MTU size
-      - QEMU_OPTS=-netdev user,id=net0 -device virtio-net-pci,netdev=net0
+      VERSION: "11"
     devices:
       - /dev/kvm
       - /dev/net/tun
     cap_add:
       - NET_ADMIN
     ports:
-      - "3389:3389"
-    restart: unless-stopped
-     volumes:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    volumes:
       - ./windows:/storage
-    networks:
-      - windows-net
-
-networks:
-  windows-net:
-    driver: bridge
+    restart: always
+    stop_grace_period: 2m
